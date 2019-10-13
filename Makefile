@@ -1,0 +1,3 @@
+LDFLAGS = -lcrypt
+
+all: pwhash
