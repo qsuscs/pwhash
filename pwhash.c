@@ -70,7 +70,7 @@ int main(int argc, char *argv[]) {
 
 	char *salt = randstring(16);
 	char *crypt_salt = NULL;
-        if (!method) {
+        if (!method || !strcmp(method, "crypt")) {
 		crypt_salt = salt;
 	} else {
 		if (rounds) {
