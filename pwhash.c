@@ -21,6 +21,28 @@ static const char charset[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVW
 
 static char *name;
 
+char *randstring(int len)
+{
+        char *salt = calloc(len + 1, sizeof(char));
+	int urandom = open("/dev/urandom", O_RDONLY);
+	if (urandom == -1) {
+		fprintf(stderr, "Couldn't open /dev/urandom!\n");
+		exit(1);
+	}
+	unsigned char buf;
+	char *p = salt;
+	for (int i = 0; i < 16; i++) {
+		if (read(urandom, &buf, 1) != 1) {
+			fprintf(stderr, "Couldn't read from /dev/urandom!\n");
+			exit(1);
+		}
+		*p = charset[buf % (sizeof(charset) - 1)];
+		p++;
+	}
+	close(urandom);
+	return salt;
+}
+
 void usage(void)
 {
 	fprintf(stderr, "Usage: %s [(-m|--method) METHOD] [(-r|--rounds) ROUNDS]\n", name);
@@ -46,23 +68,7 @@ int main(int argc, char *argv[]) {
 		}
 	}
 
-        char salt[17] = {0};
-	int urandom = open("/dev/urandom", O_RDONLY);
-	if (urandom == -1) {
-		fprintf(stderr, "Couldn't open /dev/urandom!\n");
-		exit(1);
-	}
-	unsigned char buf;
-	char *p = salt;
-	for (int i = 0; i < 16; i++) {
-		if (read(urandom, &buf, 1) != 1) {
-			fprintf(stderr, "Couldn't read from /dev/urandom!\n");
-			exit(1);
-		}
-		*p = charset[buf % (sizeof(charset) - 1)];
-		p++;
-	}
-
+	char *salt = randstring(16);
 	char *crypt_salt = NULL;
         if (!method) {
 		crypt_salt = salt;
