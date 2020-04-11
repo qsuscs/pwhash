@@ -73,12 +73,13 @@ int main(int argc, char *argv[]) {
         if (!method || !strcmp(method, "crypt")) {
 		crypt_salt = salt;
 	} else {
+		int ret = 0;
 		if (rounds) {
-			asprintf(&crypt_salt, "$%s$rounds=%s$%s$", method, rounds, salt);
+			ret = asprintf(&crypt_salt, "$%s$rounds=%s$%s$", method, rounds, salt);
 		} else {
-			asprintf(&crypt_salt, "$%s$%s$", method, salt);
+			ret = asprintf(&crypt_salt, "$%s$%s$", method, salt);
 		}
-		if (!crypt_salt) {
+		if (!crypt_salt || ret < 0) {
 			exit(1);
 		}
 	}
