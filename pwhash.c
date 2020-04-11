@@ -58,10 +58,10 @@ int main(int argc, char *argv[]) {
 	while ((ch = getopt_long(argc, argv, optstring, options, NULL)) != -1) {
 		switch (ch) {
 		case 'm':
-			method = strdup(optarg);
+			method = optarg;
 			break;
 		case 'r':
-			rounds = strdup(optarg);
+			rounds = optarg;
 			break;
 		default:
 			usage();
